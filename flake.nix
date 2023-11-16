@@ -25,22 +25,10 @@
 
         devShells.default = pkgs.mkShell {
           inputsFrom = [ self.packages.${system}.myapp ];
-          # we need blas/lapack libraries for scipy dependency
-          # added this from source: https://discourse.nixos.org/t/problem-installing-scipy-with-poetry-install-a-nix-shell/17830/4
           packages = with pkgs; [
-            # switching to python 3.10 because of failing scipy install- https://github.com/cython/cython/pull/4428#issuecomment-1682593857
             python310
             poetry
-            gfortran
-            pkg-config
-            lapack-reference
           ];
-
-          shellHook = ''
-            export BLAS="${pkgs.lapack-reference}/lib/libblas.dylib"
-            export LAPACK="${pkgs.lapack-reference}/lib/liblapack.dylib"
-            export LD_LIBRARY_PATH="${pkgs.zlib}/lib"
-          '';
         };
       });
 }
