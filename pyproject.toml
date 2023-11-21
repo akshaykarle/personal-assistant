@@ -8,6 +8,11 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+langchain = "^0.0.339"
+gpt4all = "^2.0.2"
+chromadb = "^0.4.17"
+langchainhub = "^0.1.14"
+bs4 = "^0.0.1"
 
 
 [build-system]
