@@ -21,7 +21,7 @@
         packages = {
           myapp = mkPoetryApplication {
             projectDir = self;
-            python = pkgs.python310;
+            python = pkgs.python311;
           };
           default = self.packages.${system}.myapp;
         };
@@ -29,7 +29,7 @@
         devShells.default = pkgs.mkShell {
           # inputsFrom = [ self.packages.${system}.myapp ];
           packages = with pkgs; [
-            python310
+            python311
             poetry
           ];
         };
