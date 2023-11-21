@@ -19,12 +19,15 @@
       in
       {
         packages = {
-          myapp = mkPoetryApplication { projectDir = self; };
+          myapp = mkPoetryApplication {
+            projectDir = self;
+            python = pkgs.python310;
+          };
           default = self.packages.${system}.myapp;
         };
 
         devShells.default = pkgs.mkShell {
-          inputsFrom = [ self.packages.${system}.myapp ];
+          # inputsFrom = [ self.packages.${system}.myapp ];
           packages = with pkgs; [
             python310
             poetry
