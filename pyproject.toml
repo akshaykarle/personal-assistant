@@ -13,6 +13,7 @@ gpt4all = "^2.0.2"
 chromadb = "^0.4.17"
 langchainhub = "^0.1.14"
 bs4 = "^0.0.1"
+tqdm = "^4.66.1"
 
 
 [build-system]
