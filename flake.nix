@@ -31,6 +31,9 @@
           packages = with pkgs; [
             python311
             poetry
+            tesseract # needed by unstructured.io to parse pdf and image files
+            poppler_utils # needed by unstructured.io to parse pdf files
+            pandoc # needed by unstructured.io to parse EPUBs, RTFs and Open Office docs
           ];
         };
       });

@@ -1,4 +1,5 @@
 import os
+import datetime
 from langchain import document_loaders
 from langchain.docstore.document import Document
 from langchain.embeddings import GPT4AllEmbeddings
@@ -8,31 +9,29 @@ from langchain import hub
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-def load_data(directory: str) -> list[Document]:
-    extension_with_loader = {
-        "csv": document_loaders.CSVLoader,
-        "txt": document_loaders.TextLoader,
-        "html": document_loaders.BSHTMLLoader,
-        "json": document_loaders.JSONLoader,
-        "md": document_loaders.UnstructuredMarkdownLoader,
-    }
-    data = []
 
-    for extension, loader in extension_with_loader.items():
-        print(f"Loading {extension} files from {directory}")
-        text_loader_kwargs={'autodetect_encoding': True}
-        data += document_loaders.DirectoryLoader(path=directory, glob=f"**/*.{extension}", recursive=True, loader_cls=loader, show_progress=True, use_multithreading=True, loader_kwargs=text_loader_kwargs).load()
-        print(f"Loaded {len(data)} {extension} files successfully!")
+def load_docs(directory: str) -> list[Document]:
+    text_loader_args={"autodetect_encoding": True, "mode": "elements"}
+    docs = []
+    docs = document_loaders.DirectoryLoader(path="../data", glob="**/*.json", recursive=True, show_progress=True, silent_errors=True, loader_cls=document_loaders.JSONLoader, loader_kwargs={"jq_schema": ".", "text_content": False}).load()
+    docs += document_loaders.DirectoryLoader(path="../data", glob="**/*.csv", recursive=True, show_progress=True, silent_errors=True, loader_cls=document_loaders.CSVLoader, loader_kwargs={"csv_args":{"delimiter": "\n"}}).load()
+    # load all non-json/csv files as text
+    docs += document_loaders.DirectoryLoader(path=directory, glob="**/*[!(.json|.csv)]", recursive=True, show_progress=True, silent_errors=True, loader_kwargs=text_loader_args).load()
+    return docs
 
-    print(f"Loaded all {len(data)} files successfully!")
-    return data
 
-docs = load_data("../data")
+docs = load_docs("../data")
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
 all_splits = text_splitter.split_documents(docs)
 
-vectorstore = Chroma.from_documents(documents=all_splits, embedding=GPT4AllEmbeddings())
+db = Chroma.from_documents(documents=all_splits, embedding=GPT4AllEmbeddings(), persist_directory="../chromadb/", collection_name="personal_assistant", collection_metadata={"timestamp": datetime.datetime.now().isoformat()})
+
+query = "What category is Transport of London in?"
+
+# similarity search using db
+# docs = db.similarity_search(query)
+# print(docs[0].page_content)
 
 llm = GPT4All(
     model="../models/gpt4all/gpt4all-falcon-q4_0.gguf",
@@ -43,9 +42,8 @@ rag_prompt = hub.pull("rlm/rag-prompt")
 
 qa_chain = RetrievalQA.from_chain_type(
     llm,
-    retriever=vectorstore.as_retriever(),
+    retriever=db.as_retriever(),
     chain_type_kwargs={"prompt": rag_prompt},
 )
 
-question = "What category is Transport of London in?"
-qa_chain({"query": question})
+qa_chain({"query": query})
