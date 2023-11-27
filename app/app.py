@@ -25,13 +25,17 @@ docs = load_docs("../data")
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
 all_splits = text_splitter.split_documents(docs)
 
-db = Chroma.from_documents(documents=all_splits, embedding=GPT4AllEmbeddings(), persist_directory="../chromadb/", collection_name="personal_assistant", collection_metadata={"timestamp": datetime.datetime.now().isoformat()})
+def store_documents(documents: list[Document], embedding) -> Chroma:
+    db = Chroma.from_documents(documents=documents, embedding=embedding, persist_directory="../chromadb/", collection_name="personal_assistant_new_embedding", collection_metadata={"timestamp": datetime.datetime.now().isoformat()})
+    return db
+
+db = store_documents(all_splits, GPT4AllEmbeddings())
 
 query = "What category is Transport of London in?"
 
 # similarity search using db
-# docs = db.similarity_search(query)
-# print(docs[0].page_content)
+# returned_docs = d.similarity_search(query)
+# print(returned_docs[:10].page_content)
 
 llm = GPT4All(
     model="../models/gpt4all/gpt4all-falcon-q4_0.gguf",
