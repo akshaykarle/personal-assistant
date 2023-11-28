@@ -4,7 +4,7 @@ from langchain.llms import GPT4All
 from langchain import hub
 from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesChain
 
-db = Database()
+db = Database(collection_name="personal_assistant")
 if db.is_empty():
     docs = load_docs_from_dir("../data")
     db.store_documents(docs)
