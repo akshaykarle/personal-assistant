@@ -12,7 +12,7 @@ class Database:
         self.docstore = Chroma(collection_name=collection_name, embedding_function=embedding, persist_directory="../chromadb/", collection_metadata={"timestamp": datetime.datetime.now().isoformat()})
 
     def is_empty(self):
-        return self.docstore.get() == 0
+        return len(self.docstore.get()['documents']) == 0
 
     def as_retriever(self):
         return self.docstore.as_retriever()

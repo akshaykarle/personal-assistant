@@ -6,6 +6,7 @@ from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesCha
 
 db = Database(collection_name="personal_assistant")
 if db.is_empty():
+    print("Database is empty, loading documents...")
     docs = load_docs_from_dir("../data")
     db.store_documents(docs)
 
