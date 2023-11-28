@@ -18,6 +18,7 @@ unstructured = "0.7.12"
 unstructured-inference = "^0.7.16"
 pytesseract = "^0.3.10"
 jq = "^1.6.0"
+sentence-transformers = "^2.2.2"
 
 
 [build-system]
