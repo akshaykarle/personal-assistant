@@ -5,6 +5,7 @@ from langchain.docstore.document import Document
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.vectorstores.utils import filter_complex_metadata
+from langchain_core.vectorstores import VectorStoreRetriever
 
 
 class Database:
@@ -15,8 +16,8 @@ class Database:
     def is_empty(self):
         return len(self.docstore.get()['documents']) == 0
 
-    def as_retriever(self):
-        return self.docstore.as_retriever()
+    def as_retriever(self, search_type: Optional[str], search_kwargs: Optional[dict]) -> VectorStoreRetriever:
+        return self.docstore.as_retriever(search_type, search_kwargs)
 
     def store_documents(self, documents: list[Document]):
         print(f"Storing {len(documents)} documents into db")

@@ -8,9 +8,15 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def split_documents(documents: list[Document]) -> list[Document]:
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=100)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2048, chunk_overlap=150)
     all_splits = text_splitter.split_documents(documents)
     print(f"Succesfully split {len(documents)} documents into {len(all_splits)} chunks...")
+    avg_doc_length = lambda documents: sum([len(doc.page_content) for doc in documents])//len(documents)
+    avg_char_count_pre = avg_doc_length(documents)
+    avg_char_count_post = avg_doc_length(all_splits)
+    print(f'Average length among {len(documents)} documents loaded is {avg_char_count_pre} characters.')
+    print(f'After the split we have {len(all_splits)} documents more than the original {len(documents)}.')
+    print(f'Average length among {len(all_splits)} documents (after split) is {avg_char_count_post} characters.')
     return all_splits
 
 
