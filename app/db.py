@@ -4,6 +4,7 @@ from typing import Optional
 from langchain.docstore.document import Document
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
+from langchain.vectorstores.utils import filter_complex_metadata
 
 
 class Database:
@@ -19,4 +20,5 @@ class Database:
 
     def store_documents(self, documents: list[Document]):
         print(f"Storing {len(documents)} documents into db")
-        self.docstore.add_documents(documents, show_progress=True)
+        filtered_docs = filter_complex_metadata(documents)
+        self.docstore.add_documents(filtered_docs, show_progress=True)
