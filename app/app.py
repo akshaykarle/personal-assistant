@@ -12,7 +12,7 @@ if db.is_empty():
 
 
 llm = LlamaCpp(
-    model_path="../models/llama-cpp/llama-2-13b-chat.gguf.q4_K_S.bin",
+    model_path="../models/llama-cpp/llama-2-13b.Q4_K_M.gguf",
     temperature=0.75,
     max_tokens=3000,
     top_p=1,
@@ -40,13 +40,11 @@ qa = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": rag_prompt},
 )
 
-query = "In which projects did we use ML pipelines?"
 query2 = "Have we done any work in the financial industry? If so, which client did we work for?"
-query3 = "What is the status of infrastructure in Canada in Talon Ada project?"
-relevant_docs = retriever.get_relevant_documents(query3)
+relevant_docs = retriever.get_relevant_documents(query2)
 print(len(relevant_docs))
 print(relevant_docs)
-response = qa(query3)
+response = qa(query2)
 print(f"""
         Question: {response['query']}
         Answer: {response['result']}
