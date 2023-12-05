@@ -8,7 +8,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def split_documents(documents: list[Document]) -> list[Document]:
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2048, chunk_overlap=150)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=25)
     all_splits = text_splitter.split_documents(documents)
     print(f"Succesfully split {len(documents)} documents into {len(all_splits)} chunks...")
     avg_doc_length = lambda documents: sum([len(doc.page_content) for doc in documents])//len(documents)
