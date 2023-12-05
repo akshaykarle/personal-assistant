@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">3.9.0,<3.11"
+python = ">3.9.7,<3.11"
 langchain = "^0.0.342"
 chromadb = "^0.4.18"
 langchainhub = "^0.1.14"
@@ -21,6 +21,8 @@ unstructured = {extras = ["all-docs"], version = "^0.11.2"}
 unstructured-pytesseract = "^0.3.12"
 pikepdf = "^8.7.1"
 pypdf = "^3.17.1"
+streamlit = "^1.29.0"
+watchdog = "^3.0.0"
 
 
 [build-system]
