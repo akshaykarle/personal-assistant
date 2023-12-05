@@ -1,3 +1,4 @@
+from pprint import pprint
 from db import Database
 from ingest import load_docs_from_dir
 from langchain.llms import LlamaCpp
@@ -20,7 +21,7 @@ llm = LlamaCpp(
     n_ctx=3000,
 )
 
-retriever = db.docstore.as_retriever(search_type="similarity", search_kwargs={"k": 10})
+retriever = db.docstore.as_retriever(search_type="similarity", search_kwargs={"k": 6, "fetch_k": 100, "lambda_mult": 0.50})
 
 prompt_template = """
 You are an assistant working for Sahaj Software Consultancy for specialized for question-answering tasks. Use the following pieces of retrieved context from the Sahaj database to answer the question. If you don't know the answer, just say that you don't know. Use five sentences maximum and keep the answer concise.
@@ -43,9 +44,10 @@ qa = RetrievalQA.from_chain_type(
 query2 = "Have we done any work in the financial industry? If so, which client did we work for?"
 relevant_docs = retriever.get_relevant_documents(query2)
 print(len(relevant_docs))
-print(relevant_docs)
+pprint(relevant_docs)
+pprint([d.metadata['source'] for d in relevant_docs])
 response = qa(query2)
-print(f"""
+pprint(f"""
         Question: {response['query']}
         Answer: {response['result']}
 
