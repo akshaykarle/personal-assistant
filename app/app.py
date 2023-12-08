@@ -1,19 +1,25 @@
 from pprint import pprint
 import os
+
 from db import Database
 from ingest import load_docs_from_dir
-from langchain.llms import LlamaCpp
 from langchain.callbacks.base import BaseCallbackHandler
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import RetrievalQA
+from langchain_core.messages import AIMessage
+from langchain.llms import LlamaCpp
 from langchain.memory import ConversationBufferMemory
 from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
+from langchain.prompts import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    SystemMessagePromptTemplate,
+)
 import streamlit as st
 
 st.set_page_config(page_title="Personal Assistant", page_icon="🕵️‍♂️")
 st.title("🕵️ Personal Assistant: Personalised help with daily tasks")
 
 
-# @st.cache_resource(ttl="1h")
 def configure_retriever(db: Database):
     # Read documents
     if db.is_empty():
@@ -23,7 +29,7 @@ def configure_retriever(db: Database):
     else:
         print("Database is ready, preparing retriever...")
 
-    retriever = db.docstore.as_retriever(search_type="similarity", search_kwargs={"k": 6, "fetch_k": 100, "lambda_mult": 0.50})
+    retriever = db.docstore.as_retriever(search_type="similarity", search_kwargs={"k": 8, "fetch_k": 100, "lambda_mult": 0.50})
 
     return retriever
 
@@ -71,24 +77,41 @@ memory = ConversationBufferMemory(memory_key="chat_history", chat_memory=msgs, r
 
 # Setup LLM and QA chain
 llm = LlamaCpp(
-    model_path="../models/llama-cpp/llama-2-13b.Q4_K_M.gguf",
-    temperature=0.75,
+    model_path="../models/llama-cpp/llama-2-13b-chat.Q4_K_M.gguf",
+    temperature=0.5,
     max_tokens=3000,
     top_p=1,
     verbose=True,  # Verbose is required to pass to the callback manager
     n_ctx=3000,
+    streaming=True,
 )
 
-qa_chain = ConversationalRetrievalChain.from_llm(
-    llm=llm,
-    retriever=retriever,
-    memory=memory,
-    verbose=True,
-)
+# Prompt
+prompt = ChatPromptTemplate(
+    messages=[
+        SystemMessagePromptTemplate.from_template(
+"""
+<<SYS>>You are a helpful, respectful and honest chatbot assistant for question-answering tasks. Use the following pieces of retrieved context and chat history to answer questions and have a conversation.
+Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+Answer in two to three sentences.<</SYS>>
+
+Context: {context}
+"""),
+        HumanMessagePromptTemplate.from_template("{question}"),
+        AIMessage(content="Answer: "),
+    ])
 
 if len(msgs.messages) == 0 or st.sidebar.button("Clear message history"):
     msgs.clear()
     msgs.add_ai_message("How can I help you?")
+
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    retriever=retriever,
+    memory=memory,
+    verbose=True,
+    chain_type_kwargs={'prompt': prompt},
+)
 
 avatars = {"human": "user", "ai": "assistant"}
 for msg in msgs.messages:
