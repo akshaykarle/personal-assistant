@@ -7,7 +7,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter, MarkdownHead
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-def split_documents(documents: list[Document]) -> list[Document]:
+def _split_documents(documents: list[Document]) -> list[Document]:
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=25)
     all_splits = text_splitter.split_documents(documents)
     print(f"Succesfully split {len(documents)} documents into {len(all_splits)} chunks...")
@@ -20,7 +20,7 @@ def split_documents(documents: list[Document]) -> list[Document]:
     return all_splits
 
 
-def load_md_docs(directory: str) -> list[Document]:
+def _load_md_docs(directory: str) -> list[Document]:
     md_docs = DirectoryLoader(path=directory, glob="**/*.md", recursive=True, show_progress=True, silent_errors=True, loader_kwargs={"autodetect_encoding": True, "mode": "elements"}).load()
     # headers_to_split_on = [
     #     ("#", "Heading 1"),
@@ -44,8 +44,8 @@ def load_docs_from_dir(directory: str) -> list[Document]:
     print("Loading csv documents...")
     docs += DirectoryLoader(path=directory, glob="**/*.csv", recursive=True, show_progress=True, silent_errors=True, loader_cls=CSVLoader, loader_kwargs={"csv_args":{"delimiter": "\n"}}).load()
     print("Loading md documents...")
-    docs += load_md_docs(directory)
+    docs += _load_md_docs(directory)
     print("Loading all remaining non-json/csv/md documents...")
     # load all non-json/csv/md files as text
     docs += DirectoryLoader(path=directory, glob="**/*[!(.json|.csv|.md)]", recursive=True, show_progress=True, silent_errors=True, loader_kwargs={"autodetect_encoding": True, "mode": "elements"}).load()
-    return split_documents(docs)
+    return _split_documents(docs)

@@ -23,6 +23,9 @@ pikepdf = "^8.7.1"
 pypdf = "^3.17.1"
 streamlit = "^1.29.0"
 watchdog = "^3.0.0"
+langserve = "^0.0.35"
+uvicorn = "^0.24.0.post1"
+sse-starlette = "^1.8.2"
 
 
 [build-system]
