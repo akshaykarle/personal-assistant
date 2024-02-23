@@ -8,24 +8,12 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">3.9.7,<3.11"
-langchain = "^0.0.342"
-chromadb = "^0.4.18"
-langchainhub = "^0.1.14"
-bs4 = "^0.0.1"
-tqdm = "^4.66.1"
-jq = "^1.6.0"
-sentence-transformers = "^2.2.2"
-llama-cpp-python = "^0.2.20"
-gguf = "^0.5.1"
-unstructured = {extras = ["all-docs"], version = "^0.11.2"}
+chromadb = "^0.4.22"
+unstructured = "^0.12.4"
 unstructured-pytesseract = "^0.3.12"
-pikepdf = "^8.7.1"
-pypdf = "^3.17.1"
-streamlit = "^1.29.0"
-watchdog = "^3.0.0"
-langserve = "^0.0.35"
-uvicorn = "^0.24.0.post1"
-sse-starlette = "^1.8.2"
+pillow-heif = "^0.15.0"
+pikepdf = "^8.13.0"
+pypdf = "^4.0.2"
 
 
 [build-system]
