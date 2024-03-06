@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "notebooks"
+version = "0.1.0"
+description = ""
+authors = ["Akshay Karle <1443108+akshaykarle@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">3.9.7,<3.11"
+langchain = "^0.1.11"
+chromadb = "^0.4.24"
+bs4 = "^0.0.2"
+unstructured = {version = "^0.12.5", extras = ["all-docs"]}
+sentence-transformers = "^2.5.1"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
