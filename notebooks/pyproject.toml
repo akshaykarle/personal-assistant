@@ -12,6 +12,8 @@ chromadb = "^0.4.24"
 bs4 = "^0.0.2"
 unstructured = {version = "^0.12.5", extras = ["all-docs"]}
 sentence-transformers = "^2.5.1"
+llama-cpp-python = "0.2.20"
+lark = "^1.1.9"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
